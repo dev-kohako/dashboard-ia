@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -9,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            String    @id @default(uuid())
   name          String
   email         String    @unique
   passwordHash  String
@@ -24,46 +23,46 @@ model User {
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   title       String
   description String?
   completed   Boolean   @default(false)
   dueDate     DateTime?
   createdAt   DateTime  @default(now())
 
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
 }
 
 model Goal {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   title       String
   description String?
   targetDate  DateTime?
   achieved    Boolean   @default(false)
   createdAt   DateTime  @default(now())
 
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
 }
 
 model Habit {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   name        String
   frequency   String    // daily, weekly, etc.
   streak      Int       @default(0)
   lastTracked DateTime?
   createdAt   DateTime  @default(now())
 
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
 }
 
 model AIInsight {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   content     String
   createdAt   DateTime  @default(now())
 
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
 }
