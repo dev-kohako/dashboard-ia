@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun src/index.ts"
+  },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bun": "latest",
@@ -17,12 +20,12 @@
     "@prisma/client": "^6.6.0",
     "apollo-server": "^3.13.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.6.0",
     "zod": "^3.24.2"
   }
 }
