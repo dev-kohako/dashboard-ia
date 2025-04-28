@@ -8,61 +8,130 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  name          String
-  email         String    @unique
-  passwordHash  String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String        @id @default(uuid())
+  name           String
+  email          String        @unique
+  acceptTerms    String
+  isVerified       Boolean  @default(false)
+  verificationCode String?
+  passwordHash   String
+  codeExpiresAt    DateTime?
+  createdAt      DateTime      @default(now())
 
-  // Relacionamentos
-  tasks         Task[]
-  goals         Goal[]
-  habits        Habit[]
-  aiInsights    AIInsight[]
+  tasks          Task[]
+  goals          Goal[]
+  finances       Finance[]
+  habits         Habit[]
+  notes          Note[]
+  aiInteractions AiLog[]
+  notifications  Notification[]
+  tags           Tag[]
+  events         Event[]
 }
 
 model Task {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  completed   Boolean   @default(false)
-  dueDate     DateTime?
-  createdAt   DateTime  @default(now())
+  id        String   @id @default(uuid())
+  title     String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
 
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  tags      Tag[]    @relation("TaskTags")
 }
 
 model Goal {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
-  targetDate  DateTime?
-  achieved    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-
+  completed   Boolean  @default(false)
+  deadline    DateTime?
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+
+  user        User     @relation(fields: [userId], references: [id])
+  tags        Tag[]    @relation("GoalTags")
+}
+
+model Finance {
+  id        String      @id @default(uuid())
+  type      FinanceType
+  amount    Float
+  category  String
+  note      String?
+  date      DateTime    @default(now())
+  userId    String
+
+  user      User        @relation(fields: [userId], references: [id])
+}
+
+enum FinanceType {
+  INCOME
+  EXPENSE
 }
 
 model Habit {
-  id          String    @id @default(uuid())
-  name        String
-  frequency   String    // daily, weekly, etc.
-  streak      Int       @default(0)
-  lastTracked DateTime?
-  createdAt   DateTime  @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  streak    Int      @default(0)
+  lastDone  DateTime?
+  userId    String
 
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-model AIInsight {
-  id          String    @id @default(uuid())
-  content     String
-  createdAt   DateTime  @default(now())
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  userId    String
 
+  user      User     @relation(fields: [userId], references: [id])
+  tags      Tag[]    @relation("NoteTags")
+}
+
+model AiLog {
+  id        String   @id @default(uuid())
+  prompt    String
+  response  String
+  createdAt DateTime @default(now())
+  userId    String
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  triggerAt DateTime
+  read      Boolean  @default(false)
+  userId    String
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  color     String?
+  userId    String
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  tasks     Task[]   @relation("TaskTags")
+  notes     Note[]   @relation("NoteTags")
+  goals     Goal[]   @relation("GoalTags")
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime
+  location    String?
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+
+  user        User     @relation(fields: [userId], references: [id])
 }
