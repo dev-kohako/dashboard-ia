@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
+    "@types/mjml": "^4.7.4",
+    "@types/nodemailer": "^6.4.17",
     "apollo-server": "^3.13.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
@@ -26,6 +28,7 @@
     "express": "^5.1.0",
     "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.10.1",
     "zod": "^3.24.2"
   }
 }
