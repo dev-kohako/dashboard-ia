@@ -1,17 +1,14 @@
-import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
-import { authRoutes } from './routes/auth.ts';
+import { ApolloServer } from 'apollo-server'
+import { typeDefs } from './schemas/auth.schema'
+import { resolvers } from './resolvers/auth.resolver'
+import { createContext } from './utils/context'
 
-dotenv.config()
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: createContext
+})
 
-const app = express()
-app.use(cors())
-app.use(express.json())
-
-app.use('/auth', authRoutes);
-
-const PORT = process.env.PORT || 3333
-app.listen(PORT, () => {
-  console.log(`🔥 Server running at http://localhost:${PORT}`)
+server.listen({ port: process.env.PORT }).then(({ url }) => {
+  console.log(`🚀 Servidor GraphQL rodando em ${url}`)
 })
