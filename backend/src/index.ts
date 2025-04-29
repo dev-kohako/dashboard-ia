@@ -6,15 +6,9 @@ import { createContext } from './utils/context'
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: createContext,
+  context: createContext
 })
 
-server.listen({
-  port: process.env.PORT,
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-}).then(({ url }) => {
+server.listen({ port: process.env.PORT }).then(({ url }) => {
   console.log(`🚀 Servidor GraphQL rodando em ${url}`)
 })
