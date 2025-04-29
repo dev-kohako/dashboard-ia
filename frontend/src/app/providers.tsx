@@ -4,7 +4,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000",
+  uri: "https://dashboard-ia-oz1s.onrender.com",
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: { fetchPolicy: "network-only" },
