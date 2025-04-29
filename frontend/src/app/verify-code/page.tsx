@@ -33,7 +33,7 @@ export default function VerifyCode() {
     >
       <Navbar />
       <Toaster />
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense>
         <VerifyCodeForm />
       </Suspense>
     </main>
