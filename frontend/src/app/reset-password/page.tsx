@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 
@@ -17,21 +17,9 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/ui/navbar";
 import { Loader2 } from "lucide-react";
 import { useResetPassword } from "./useResetPassword";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const { form, onSubmit, isLoading, newPasswordRef } = useResetPassword();
-  
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = searchParams.get("token");
-
-    if (!token) {
-      router.push("/login");
-    }
-  }, [searchParams, router]);
 
   return (
     <>
@@ -42,6 +30,7 @@ export default function ResetPasswordPage() {
         role="main"
         aria-label="Redefinir senha KWK"
       >
+        <Suspense fallback={<div>Loading...</div>}>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -116,6 +105,7 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
         </Form>
+        </Suspense>
       </main>
     </>
   );
