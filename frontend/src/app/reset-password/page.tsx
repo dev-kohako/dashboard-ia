@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";  // Importando o Suspense
+import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 
@@ -20,6 +20,16 @@ import { useResetPassword } from "./useResetPassword";
 
 export default function ResetPasswordPage() {
   const { form, onSubmit, isLoading, newPasswordRef } = useResetPassword();
+  
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -30,82 +40,80 @@ export default function ResetPasswordPage() {
         role="main"
         aria-label="Redefinir senha KWK"
       >
-        <Suspense fallback={<div>Carregando...</div>}>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 rounded-xl border border-zinc-300 dark:border-zinc-800 p-4 lg:p-8"
-              aria-labelledby="reset-password-title"
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 rounded-xl border border-zinc-300 dark:border-zinc-800 p-4 lg:p-8"
+            aria-labelledby="reset-password-title"
+          >
+            <h1
+              id="reset-password-title"
+              className="text-3xl mb-4 font-bold self-start"
             >
-              <h1
-                id="reset-password-title"
-                className="text-3xl mb-4 font-bold self-start"
-              >
-                Redefinir senha
-              </h1>
-              <Separator className="my-4 bg-zinc-300 dark:bg-zinc-800" />
-              <FormField
-                control={form.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="newPassword">Nova senha</FormLabel>
-                    <FormControl className="w-76 lg:w-80">
-                      <Input
-                        id="newPassword"
-                        type="password"
-                        placeholder="Digite sua nova senha"
-                        {...field}
-                        ref={(e) => {
-                          field.ref(e);
-                          newPasswordRef.current = e;
-                        }}
-                        aria-invalid={form.formState.errors.newPassword ? "true" : "false"}
-                        aria-describedby="newPassword-error"
-                        autoComplete="new-password"
-                      />
-                    </FormControl>
-                    <FormMessage id="newPassword-error" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmNewPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="confirmNewPassword">
-                      Confirmar nova senha
-                    </FormLabel>
-                    <FormControl className="w-76 lg:w-80">
-                      <Input
-                        id="confirmNewPassword"
-                        type="password"
-                        placeholder="Confirme sua nova senha"
-                        {...field}
-                        aria-invalid={form.formState.errors.confirmNewPassword ? "true" : "false"}
-                        aria-describedby="confirmNewPassword-error"
-                        autoComplete="new-password"
-                      />
-                    </FormControl>
-                    <FormMessage id="confirmNewPassword-error" />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="w-full mt-2 flex items-center justify-center gap-2"
-                disabled={isLoading}
-                aria-busy={isLoading}
-              >
-                {isLoading && (
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                )}
-                {isLoading ? "Redefinindo..." : "Redefinir senha"}
-              </Button>
-            </form>
-          </Form>
-        </Suspense>
+              Redefinir senha
+            </h1>
+            <Separator className="my-4 bg-zinc-300 dark:bg-zinc-800" />
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="newPassword">Nova senha</FormLabel>
+                  <FormControl className="w-76 lg:w-80">
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      placeholder="Digite sua nova senha"
+                      {...field}
+                      ref={(e) => {
+                        field.ref(e);
+                        newPasswordRef.current = e;
+                      }}
+                      aria-invalid={form.formState.errors.newPassword ? "true" : "false"}
+                      aria-describedby="newPassword-error"
+                      autoComplete="new-password"
+                    />
+                  </FormControl>
+                  <FormMessage id="newPassword-error" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmNewPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="confirmNewPassword">
+                    Confirmar nova senha
+                  </FormLabel>
+                  <FormControl className="w-76 lg:w-80">
+                    <Input
+                      id="confirmNewPassword"
+                      type="password"
+                      placeholder="Confirme sua nova senha"
+                      {...field}
+                      aria-invalid={form.formState.errors.confirmNewPassword ? "true" : "false"}
+                      aria-describedby="confirmNewPassword-error"
+                      autoComplete="new-password"
+                    />
+                  </FormControl>
+                  <FormMessage id="confirmNewPassword-error" />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full mt-2 flex items-center justify-center gap-2"
+              disabled={isLoading}
+              aria-busy={isLoading}
+            >
+              {isLoading && (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              )}
+              {isLoading ? "Redefinindo..." : "Redefinir senha"}
+            </Button>
+          </form>
+        </Form>
       </main>
     </>
   );
