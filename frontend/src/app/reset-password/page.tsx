@@ -1,6 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 
