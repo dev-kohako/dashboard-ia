@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt";
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../utils/jwt";
 import { sendVerificationEmail } from "../emails/sendVerificationEmail";
 import { sendResetPasswordEmail } from "../emails/sendResetPasswordEmail";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client/edge";
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 const generateResetToken = (userId: string) => {
