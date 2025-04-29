@@ -17,19 +17,21 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/ui/navbar";
 import { Loader2 } from "lucide-react";
 import { useResetPassword } from "./useResetPassword";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const { form, onSubmit, isLoading, newPasswordRef } = useResetPassword();
   
-  const [isClient, setIsClient] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const token = searchParams.get("token");
 
-  if (!isClient) {
-    return <div>Loading...</div>;
-  }
+    if (!token) {
+      router.push("/login");
+    }
+  }, [searchParams, router]);
 
   return (
     <>
