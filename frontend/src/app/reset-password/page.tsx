@@ -21,7 +21,6 @@ import { Loader2 } from "lucide-react";
 import { useResetPassword } from "./useResetPassword";
 
 export default function ResetPasswordPage() {
-  const { form, onSubmit, isLoading, newPasswordRef } = useResetPassword();
 
   return (
     <>
