@@ -7,7 +7,7 @@ export interface RegisterInput {
   name: string;
   email: string;
   password: string;
-  acceptTerms: string;
+  acceptTerms: boolean;
 }
 
 export interface VerifyEmailInput {
@@ -34,8 +34,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  acceptTerms: boolean;
 }
 
 export interface Context {
-  userId?: string;
+  userId: string | null;
 }
