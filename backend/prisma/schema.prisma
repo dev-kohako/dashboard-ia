@@ -3,53 +3,87 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
   id             String        @id @default(uuid())
   name           String
   email          String        @unique
-  acceptTerms    String
+  acceptTerms    Boolean  @default(false)
   isVerified       Boolean  @default(false)
   verificationCode String?
   passwordHash   String
   codeExpiresAt    DateTime?
   createdAt      DateTime      @default(now())
 
-  tasks          Task[]
-  goals          Goal[]
+  tasks          Task[]    
+  goals          Goal[]   
   finances       Finance[]
-  habits         Habit[]
-  notes          Note[]
-  aiInteractions AiLog[]
-  notifications  Notification[]
-  tags           Tag[]
-  events         Event[]
+  habits         Habit[]  
+  notes          Note[]   
+  aiInteractions AiLog[]  
+  notifications  Notification[]   
+  tags           Tag[]  
+  events         Event[]  
 }
 
 model Task {
-  id        String   @id @default(uuid())
-  title     String
-  done      Boolean  @default(false)
-  createdAt DateTime @default(now())
-  userId    String
-
-  user      User     @relation(fields: [userId], references: [id])
-  tags      Tag[]    @relation("TaskTags")
-}
-
-model Goal {
   id          String   @id @default(uuid())
   title       String
   description String?
-  completed   Boolean  @default(false)
-  deadline    DateTime?
+  state       TaskState
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   userId      String
 
   user        User     @relation(fields: [userId], references: [id])
-  tags        Tag[]    @relation("GoalTags")
+  tags        Tag[]    @relation("TaskTags")
+  feedback    String?
+}
+
+enum TaskState {
+  TODO
+  IN_PROGRESS
+  DONE
+  EXPIRED
+  CANCELED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Goal {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  status      GoalStatus @default(NOT_STARTED)
+  progress    Float      @default(0)
+  completed   Boolean    @default(false)
+  completionDate DateTime?
+  deadline    DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      String
+
+tags        Tag[]    @relation("GoalTags")
+  user        User       @relation(fields: [userId], references: [id])
+  feedback    String?   
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+  CANCELED
 }
 
 model Finance {
@@ -70,13 +104,23 @@ enum FinanceType {
 }
 
 model Habit {
-  id        String   @id @default(uuid())
-  name      String
-  streak    Int      @default(0)
-  lastDone  DateTime?
-  userId    String
+  id          String   @id @default(uuid())
+  name        String
+  streak      Int      @default(0)
+  lastDone    DateTime?
+  frequency   HabitFrequency @default(DAILY)
+  goalPerDay  Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
 
-  user      User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKLY
+  CUSTOM
 }
 
 model Note {
@@ -86,7 +130,7 @@ model Note {
   createdAt DateTime @default(now())
   userId    String
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags      Tag[]    @relation("NoteTags")
 }
 
@@ -97,7 +141,7 @@ model AiLog {
   createdAt DateTime @default(now())
   userId    String
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
@@ -107,8 +151,16 @@ model Notification {
   triggerAt DateTime
   read      Boolean  @default(false)
   userId    String
+  type      NotificationType @default(REMINDER)
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  REMINDER
+  ALERT
+  SYSTEM
+  SUGGESTION
 }
 
 model Tag {
@@ -117,12 +169,14 @@ model Tag {
   color     String?
   userId    String
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   tasks     Task[]   @relation("TaskTags")
   notes     Note[]   @relation("NoteTags")
   goals     Goal[]   @relation("GoalTags")
+  events    Event[]  @relation("EventTags")
 }
+
 
 model Event {
   id          String   @id @default(uuid())
@@ -131,7 +185,9 @@ model Event {
   startAt     DateTime
   endAt       DateTime
   location    String?
+  confirmed   Boolean  @default(false)
   userId      String
 
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags        Tag[]    @relation("EventTags")
 }
