@@ -7,6 +7,7 @@ import {
 } from "../controllers/auth.controller";
 import type {
   AuthPayload,
+  Context,
   ForgotPasswordInput,
   LoginInput,
   RegisterInput,
@@ -14,33 +15,37 @@ import type {
   VerifyEmailInput,
 } from "../types/auth.types";
 
-export const resolvers = {
+export const authResolvers = {
   Mutation: {
-    login: async (_: any, args: LoginInput): Promise<AuthPayload> => {
-      return await loginWithCredentials(args.email, args.password);
-    },
-    register: async (_: any, args: RegisterInput): Promise<AuthPayload> => {
-      return await registerWithCredentials(
-        args.name,
-        args.email,
-        args.password,
-        args.acceptTerms
-      );
-    },
-    verify: async (_: any, args: VerifyEmailInput): Promise<AuthPayload> => {
-      return await verifyEmailCodeWithCredentials(args.userId, args.code);
-    },
-    forgotPassword: async (
+    registerUser: async (
       _: any,
-      args: ForgotPasswordInput
+      args: { input: RegisterInput }
     ): Promise<AuthPayload> => {
-      return await forgotPasswordWithCredentials(args.email);
+      return await registerWithCredentials(args.input);
     },
-    resetPassword: async (
+    loginUser: async (
       _: any,
-      args: ResetPasswordInput
+      args: { input: LoginInput }
     ): Promise<AuthPayload> => {
-      return await resetPasswordWithToken(args.token, args.newPassword);
+      return await loginWithCredentials(args.input);
+    },
+    verifyUserEmail: async (
+      _: any,
+      args: { input: VerifyEmailInput }
+    ): Promise<AuthPayload> => {
+      return await verifyEmailCodeWithCredentials(args.input);
+    },
+    forgotUserPassword: async (
+      _: any,
+      args: { input: ForgotPasswordInput }
+    ): Promise<AuthPayload> => {
+      return await forgotPasswordWithCredentials(args.input);
+    },
+    resetUserPassword: async (
+      _: any,
+      args: { input: ResetPasswordInput }
+    ): Promise<AuthPayload> => {
+      return await resetPasswordWithToken(args.input);
     },
   },
 };
