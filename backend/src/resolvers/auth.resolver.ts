@@ -7,7 +7,6 @@ import {
 } from "../controllers/auth.controller";
 import type {
   AuthPayload,
-  Context,
   ForgotPasswordInput,
   LoginInput,
   RegisterInput,
