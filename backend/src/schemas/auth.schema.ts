@@ -6,6 +6,9 @@ export const authSchema = gql`
     name: String!
     email: String!
     acceptTerms: Boolean!
+    authProvider: String!
+    hasPassword: Boolean!
+    twoFactorEnabled: Boolean!
   }
 
   input RegisterInput {
@@ -34,6 +37,10 @@ export const authSchema = gql`
     newPassword: String!
   }
 
+  input LoginWithGoogleInput {
+    idToken: String!
+  }
+
   type AuthPayload {
     token: String
     user: User
@@ -47,6 +54,7 @@ export const authSchema = gql`
   type Mutation {
     registerUser(input: RegisterInput!): AuthPayload!
     loginUser(input: LoginInput!): AuthPayload!
+    loginWithGoogle(input: LoginWithGoogleInput!): AuthPayload!
     verifyUserEmail(input: VerifyEmailInput!): AuthPayload!
     forgotUserPassword(input: ForgotPasswordInput!): AuthPayload!
     resetUserPassword(input: ResetPasswordInput!): AuthPayload!
