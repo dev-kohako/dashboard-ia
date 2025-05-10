@@ -7,11 +7,13 @@ import type {
   AuthPayload,
   ForgotPasswordInput,
   LoginInput,
+  LoginWithGoogleInput,
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
 } from "../types/auth.types";
 import prisma from "../utils/prisma";
+import { OAuth2Client } from "google-auth-library";
 
 export const registerWithCredentials = async ({
   name,
@@ -44,14 +46,16 @@ export const registerWithCredentials = async ({
         verificationCode,
         codeExpiresAt,
         isVerified: false,
+        hasPassword: true,
+        twoFactorEnabled: false
       },
     });
 
-    await sendVerificationEmail(email, verificationCode);
+    await sendVerificationEmail(email, verificationCode, "register");
 
     return {
       user,
-      message: "Conta criada com sucesso",
+      message: "Conta criada com sucesso. Verifique seu e-mail.",
     };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Erro inesperado";
@@ -67,8 +71,8 @@ export const loginWithCredentials = async ({
 }: LoginInput): Promise<AuthPayload> => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new Error("Usuário não encontrado");
+    if (!user || !user.passwordHash) {
+      throw new Error("Usuário não encontrado ou senha não configurada.");
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
@@ -76,18 +80,95 @@ export const loginWithCredentials = async ({
       throw new Error("Senha incorreta");
     }
 
+    if (user.twoFactorEnabled) {
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      const codeExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          verificationCode,
+          codeExpiresAt,
+        },
+      });
+
+      await sendVerificationEmail(user.email, verificationCode, "login");
+
+      return {
+        user,
+        message: "Código de verificação enviado. Verifique seu e-mail.",
+      };
+    }
+
     const token = generateToken(user.id);
 
     return {
-      token,
       user,
-      message: "Conta verificada com sucesso",
+      token,
+      message: "Login realizado com sucesso.",
     };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Erro inesperado";
     return {
       message,
     };
+  }
+};
+
+
+export const loginWithGoogle = async ({
+  idToken,
+}: LoginWithGoogleInput): Promise<AuthPayload> => {
+  const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID!);
+  
+  try {
+    if (!idToken) {
+      throw new Error("Token de autenticação ausente.");
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload?.email_verified || !payload.email || !payload.name) {
+      throw new Error("Email não verificado ou ausente.");
+    }
+    
+    const { sub: googleId, email, name, picture } = payload;
+    
+    let user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email,
+          name,
+          googleId,
+          avatarUrl: picture,
+          isVerified: true,
+          acceptTerms: true,
+          authProvider: "google",
+          hasPassword: false,
+          twoFactorEnabled: false
+        },
+      });
+    }
+
+    const token = generateToken(user.id);
+
+    return {
+      token,
+      user,
+      message: "Login com Google realizado com sucesso.",
+    };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Erro inesperado ao autenticar.";
+    throw new Error(message);
   }
 };
 
@@ -182,7 +263,11 @@ export const verifyEmailCodeWithCredentials = async ({
       },
     });
 
+    const token = generateToken(user.id);
+
     return {
+      token,
+      user,
       message: "Conta verificada com sucesso!",
     };
   } catch (error: unknown) {
