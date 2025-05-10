@@ -4,11 +4,13 @@ import {
   forgotPasswordWithCredentials,
   verifyEmailCodeWithCredentials,
   resetPasswordWithToken,
+  loginWithGoogle,
 } from "../controllers/auth.controller";
 import type {
   AuthPayload,
   ForgotPasswordInput,
   LoginInput,
+  LoginWithGoogleInput,
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
@@ -45,6 +47,12 @@ export const authResolvers = {
       args: { input: ResetPasswordInput }
     ): Promise<AuthPayload> => {
       return await resetPasswordWithToken(args.input);
+    },
+    loginWithGoogle: async (
+      _: any,
+      args: { input: LoginWithGoogleInput }
+    ): Promise<AuthPayload> => {
+      return await loginWithGoogle(args.input);
     },
   },
 };
