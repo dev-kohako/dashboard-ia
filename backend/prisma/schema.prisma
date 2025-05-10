@@ -11,10 +11,15 @@ model User {
   id             String        @id @default(uuid())
   name           String
   email          String        @unique
+  avatarUrl String?
+  googleId  String?  @unique
   acceptTerms    Boolean  @default(false)
   isVerified       Boolean  @default(false)
+  authProvider      String @default("credentials")
   verificationCode String?
-  passwordHash   String
+  hasPassword     Boolean  @default(false)
+  passwordHash     String?
+  twoFactorEnabled  Boolean  @default(false)
   codeExpiresAt    DateTime?
   createdAt      DateTime      @default(now())
 
