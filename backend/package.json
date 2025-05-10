@@ -17,6 +17,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.803.0",
+    "@aws-sdk/s3-request-presigner": "^3.803.0",
     "@prisma/client": "^6.6.0",
     "@types/micro-cors": "^0.1.5",
     "@types/mjml": "^4.7.4",
@@ -28,10 +30,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "google-auth-library": "^9.15.1",
     "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",
     "micro-cors": "^0.1.1",
     "nodemailer": "^6.10.1",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   }
 }

@@ -1,13 +1,19 @@
+import type { User } from "./user.types";
+
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface LoginWithGoogleInput {
+  idToken: string;
 }
 
 export interface RegisterInput {
   name: string;
   email: string;
   password: string;
-  acceptTerms: string;
+  acceptTerms: boolean;
 }
 
 export interface VerifyEmailInput {
@@ -30,12 +36,6 @@ export interface AuthPayload {
   message?: string;
 }
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
 export interface Context {
-  userId?: string;
+  userId: string | null;
 }

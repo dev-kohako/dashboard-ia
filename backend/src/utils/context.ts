@@ -1,26 +1,29 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
+import type { Context } from "../types/auth.types";
 
 interface DecodedToken {
-  id: string
+  userId: string;
 }
 
-export interface Context {
-  userId: string | null
-}
-
-export const createContext = ({ req }: { req: { headers: Record<string, string> } }): Context => {
-  const authHeader = req.headers.authorization || ''
-  const token = authHeader.startsWith('Bearer ') ? authHeader.replace('Bearer ', '') : null
+export const createContext = ({
+  req,
+}: {
+  req: { headers: Record<string, string> };
+}): Context => {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.replace("Bearer ", "")
+    : null;
 
   if (!token) {
-    return { userId: null }
+    return { userId: null };
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken
-    return { userId: decoded.id }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
+    return { userId: decoded.userId };
   } catch (err) {
-    console.error('Error verifying token:', err)
-    return { userId: null }
+    console.error("Erro ao verificar token:", err);
+    return { userId: null };
   }
-}
+};

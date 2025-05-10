@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
         role="main"
         aria-label="Redefinir senha KWK"
       >
-        <Suspense fallback={<div>Carregando...</div>}>
+        <Suspense>
           <ResetPasswordForm />
         </Suspense>
       </main>
