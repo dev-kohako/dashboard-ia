@@ -53,8 +53,8 @@ export function useAccount() {
       firstName: user?.name?.trim().split(/\s+/)[0] || "",
       lastName: user?.name?.trim().split(/\s+/).slice(1).join(" ") || "",
       email: user?.email || undefined,
-      oldPassword: "",
-      password: "",
+      oldPassword: isEditing ? undefined : "",
+      password: isEditing ? undefined : "",
       twoFactorEnabled: user?.twoFactorEnabled || undefined
     },
   });
