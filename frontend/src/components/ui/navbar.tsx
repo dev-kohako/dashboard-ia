@@ -59,8 +59,8 @@ const Navbar = ({
     title: "KWK Dashboard",
   },
   auth = {
-    login: { title: "Registar", url: "/register" },
-    signup: { title: "Entrar", url: "/login" },
+    login: { title: "Registar", url: "/auth/register" },
+    signup: { title: "Entrar", url: "/auth/login" },
   },
   links = {
     home: { title: "Inicio", url: "#" },
