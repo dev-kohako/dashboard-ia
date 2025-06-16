@@ -32,6 +32,7 @@ model User {
   notifications  Notification[]   
   tags           Tag[]  
   events         Event[]  
+  taskHistories  TaskHistory[]
 }
 
 model Task {
@@ -47,7 +48,21 @@ model Task {
 
   user        User     @relation(fields: [userId], references: [id])
   tags        Tag[]    @relation("TaskTags")
+  history     TaskHistory[]
   feedback    String?
+}
+
+model TaskHistory {
+  id            String     @id @default(uuid())
+  taskId        String
+  changedBy     String
+  changeType    String
+  previousState TaskState?
+  newState      TaskState?
+  changedAt     DateTime   @default(now())
+
+  task          Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [changedBy], references: [id])
 }
 
 enum TaskState {
